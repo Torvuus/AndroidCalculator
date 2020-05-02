@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidCalculator</string>
+    <string name="divided_by_zero">Cannot divide by 0</string>
+</resources>
