@@ -7,24 +7,25 @@ import android.widget.Button
 import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var calculator:Calculator
+    private  var calculator=Calculator()
     lateinit var expressionTxt:TextView
     lateinit var resultTxt:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var calculator=Calculator()
+        //var calculator=
         expressionTxt=findViewById<TextView>(R.id.textViewExpression)
         resultTxt=findViewById<TextView>(R.id.textViewResult)
     }
     fun buttonClicked(view: View){
-        var buttonId=findViewById<Button>(view?.id)
+        var buttonId=findViewById<TextView>(view?.id)
         var buttonTxt=buttonId?.text.toString()
+
 
         when(buttonTxt){
             "CLR"->calculator.clear()
-            "<-"->calculator.delete()
+            "Delete"->calculator.delete()
             "="->{
                 calculator.calculate()
                 resultTxt.text=calculator.getResult()
