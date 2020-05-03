@@ -103,9 +103,7 @@ class Calculator (){
     }
     fun calculate(){
         if(numbers.lastIndex!=-1 && operators.lastIndex!=-1){
-            if(number.lastIndex==operators.lastIndex){
-                operators.removeAt(operators.lastIndex)
-            }
+
             for(operator in hierarchy){
                 while(operator in operators){
                     var tmpIndex=operators.indexOf(operator)
@@ -146,10 +144,14 @@ class Calculator (){
     fun validation(){
         calculatedProperly = numbers.size>-1
     }
+    fun canCalculate():Boolean{
+        return numbers.size>operators.size
+    }
 
     fun getResult():String{
         insertSignsFromTmpVar()
-        calculate()
+        if(canCalculate())
+            calculate()
         clear()
         validation()
         return if(calculatedProperly) {

@@ -27,7 +27,6 @@ class MainActivity : AppCompatActivity() {
             "CLR"->calculator.clear()
             "Delete"->calculator.delete()
             "="->{
-                calculator.calculate()
                 resultTxt.text=calculator.getResult()
             }
             else->calculator.insertAny(buttonTxt.single())
