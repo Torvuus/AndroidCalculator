@@ -14,7 +14,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //var calculator=
         expressionTxt=findViewById<TextView>(R.id.textViewExpression)
         resultTxt=findViewById<TextView>(R.id.textViewResult)
     }
@@ -24,13 +23,18 @@ class MainActivity : AppCompatActivity() {
 
 
         when(buttonTxt){
-            "CLR"->calculator.clear()
+            "CLR"->{
+                calculator.clear()
+                expressionTxt.setText("")
+            }
             "Delete"->calculator.delete()
             "="->{
                 resultTxt.text=calculator.getResult()
             }
             else->calculator.insertAny(buttonTxt.single())
         }
-        expressionTxt.text=calculator.getExpression()
+        //expressionTxt.text=calculator.getExpression()
+         expressionTxt.text=calculator.numbers.toString()
+        //resultTxt.text=calculator.operators.toString()
     }
 }

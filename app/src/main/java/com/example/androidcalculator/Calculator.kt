@@ -1,8 +1,8 @@
 package com.example.androidcalculator
 
 class Calculator (){
-    private val numbers= mutableListOf<Double>()
-    private val operators= mutableListOf<Char>()
+    val numbers= mutableListOf<Double>()
+    val operators= mutableListOf<Char>()
     private val hierarchy= listOf('/','*','+','-')
     //private val operatorsTest= listOf('/','*','+','-','.')
     private val numbersWithZeroTest= listOf('1','2','3','4','5','6','7','8','9','0')
@@ -13,6 +13,7 @@ class Calculator (){
     var number=""
     var isOneDot=false
     var lastAdded="none"
+    var outcome=""
     var calculatedProperly=true
 
     fun clear(){
@@ -105,7 +106,7 @@ class Calculator (){
         if(numbers.lastIndex!=-1 && operators.lastIndex!=-1){
 
             for(operator in hierarchy){
-                while(operator in operators){
+                while(operator in operators && numbers.lastIndex!=0){
                     var tmpIndex=operators.indexOf(operator)
                     numbers[tmpIndex]=simpleOperation(operator,numbers[tmpIndex],numbers[tmpIndex+1])
                     operators.removeAt(tmpIndex)
@@ -152,18 +153,20 @@ class Calculator (){
         insertSignsFromTmpVar()
         if(canCalculate())
             calculate()
+        outcome=numbers.toString()
         clear()
         validation()
         return if(calculatedProperly) {
-            numbers.toString()
+            outcome
         } else
             "Error"
     }
 
     fun getExpression():String{
         var increasingIndex=0
-        if (numbers.lastIndex>0){
-            while (increasingIndex!=numbers.lastIndex) {
+        expressionTxt=""
+        if (numbers.lastIndex>=0){
+            while (increasingIndex<=numbers.lastIndex) {
                 expressionTxt += numbers.elementAt(increasingIndex).toString()
                 if (increasingIndex <= operators.lastIndex)
                     expressionTxt += operators.elementAt(increasingIndex).toString()
@@ -171,5 +174,13 @@ class Calculator (){
         }
         }
         return expressionTxt
+    }
+
+    //test
+    fun testCalculateFuncWithOnlyPlus(){
+        clear()
+        for ( i in 0..10 )insertNumber(i.toDouble())
+        for (i in 0..9)insertSign('+')
+        calculate()
     }
 }
