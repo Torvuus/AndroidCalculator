@@ -24,13 +24,14 @@ class Calculator (){
         number=""
         isOneDot=false
         lastAdded="none"
-        calculatedProperly=true
+        validation()
     }
 
     fun insertNumber(num:Double)=numbers.add(num)
     fun insertSign(sign:Char)=operators.add(sign)
     fun insertNumberAndSetSign(num: Double,sign: Char){
         insertNumber(num)
+        isOneDot=false
         number=""
         currentSign=sign
     }
@@ -51,10 +52,13 @@ class Calculator (){
                         isOneDot=true
                         number+=any
                         currentSign=any
+                    }else if(number.length>1 && number!="0" && checkSignWithLists(any,numbersWithZeroTest)){
+                        currentSign=any
+                        number+=any
                     }
                 }
                 in hierarchy->{
-                    if(checkSignWithLists(any, numbersTest)){
+                    if(checkSignWithLists(any, numbersWithZeroTest)){
                         currentSign=any
                         number+=currentSign
                         insertSign(previousSign)
@@ -63,10 +67,13 @@ class Calculator (){
                 '.'->{
                     if(checkSignWithLists(any,hierarchy)){
                         insertNumberAndSetSign(number.toDouble(),any)
+                    }else if (checkSignWithLists(any,numbersWithZeroTest)){
+                        currentSign=any
+                        number+=any
                     }
                 }
                 in numbersTest->{
-                    if(checkSignWithLists(any, numbersTest)){
+                    if(checkSignWithLists(any, numbersWithZeroTest)){
                         currentSign=any
                         number+=currentSign
                     }else if(checkSignWithLists(any, hierarchy)){
@@ -89,16 +96,17 @@ class Calculator (){
         return false
     }
 
-    fun checkSignWithLists(sign: Char,list: List<Char>):Boolean{
-        return sign in list
-    }
+    fun checkSignWithLists(sign: Char,list: List<Char>):Boolean= sign in list
 
     fun simpleOperation(sign:Char,a:Double,b:Double):Double{
         return when (sign) {
             '+' -> a + b
             '-' -> a - b
             '*' -> a * b
-            '/' -> if (b != 0.0) a / b else 0.0 // to do errors
+            '/' -> if (b != 0.0) a / b else {
+                calculatedProperly=false
+                return 0.0
+            } // to do errors
             else -> 0.0
         }
     }
@@ -137,26 +145,28 @@ class Calculator (){
 
     fun insertSignsFromTmpVar(){
         if(!isFirstSign()){
-            if(currentSign in numbersTest){
+            if(currentSign in numbersWithZeroTest){
                 insertNumber(number.toDouble())
             }
         }
     }
     fun validation(){
-        calculatedProperly = numbers.size>-1
+        if(calculatedProperly)
+            calculatedProperly = numbers.size>-1
     }
     fun canCalculate():Boolean{
         return numbers.size>operators.size
     }
 
     fun getResult():String{
+        calculatedProperly=true
         insertSignsFromTmpVar()
         if(canCalculate())
             calculate()
-        outcome=numbers.toString()
+        outcome=numbers[0].toString()
         clear()
-        validation()
-        return if(calculatedProperly) {
+
+       return if(calculatedProperly) {
             outcome
         } else
             "Error"

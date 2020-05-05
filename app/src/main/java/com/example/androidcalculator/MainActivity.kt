@@ -34,7 +34,8 @@ class MainActivity : AppCompatActivity() {
             else->calculator.insertAny(buttonTxt.single())
         }
         //expressionTxt.text=calculator.getExpression()
-         expressionTxt.text=calculator.numbers.toString()
+         //expressionTxt.text=calculator.numbers.toString()
+        expressionTxt.text=calculator.number
         //resultTxt.text=calculator.operators.toString()
     }
 }
