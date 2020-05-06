@@ -125,13 +125,16 @@ class Calculator (){
     }
 
     fun delete() {
-        number=""
-        expressionTxt=""
-        when(lastAdded){
-            "number"->numbers.removeAt(numbers.lastIndex)
-            "operator"->operators.removeAt(numbers.lastIndex)
+        if(!number.none()){
+            number=number.dropLast(1)
+        }else {
+            when (lastAdded) {
+                "number" -> numbers.removeAt(numbers.lastIndex)
+                "operator" -> operators.removeAt(numbers.lastIndex)
+            }
+            checkLastAdded()
         }
-        checkLastAdded()
+        getExpression()
     }
 
 
@@ -145,7 +148,7 @@ class Calculator (){
 
     fun insertSignsFromTmpVar(){
         if(!isFirstSign()){
-            if(currentSign in numbersWithZeroTest){
+            if(currentSign in numbersWithZeroTest && !number.none()){
                 insertNumber(number.toDouble())
             }
         }
@@ -163,11 +166,12 @@ class Calculator (){
         insertSignsFromTmpVar()
         if(canCalculate())
             calculate()
-        outcome=numbers[0].toString()
+        if(!number.none())
+            outcome=numbers[0].toString()
         clear()
 
        return if(calculatedProperly) {
-            outcome
+           "=$outcome"
         } else
             "Error"
     }
@@ -183,6 +187,8 @@ class Calculator (){
                 increasingIndex++
         }
         }
+        if(currentSign!=' ' && currentSign in hierarchy)expressionTxt+=currentSign
+        else if (!number.none()) expressionTxt+=number
         return expressionTxt
     }
 
