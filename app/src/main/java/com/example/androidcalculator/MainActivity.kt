@@ -10,6 +10,7 @@ class MainActivity : AppCompatActivity() {
     private  var calculator=Calculator()
     lateinit var expressionTxt:TextView
     lateinit var resultTxt:TextView
+    var afterResult=false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,11 +30,21 @@ class MainActivity : AppCompatActivity() {
             }
             "Delete"->calculator.delete()
             "="->{
-                resultTxt.text=calculator.getResult()
+                if(!afterResult) {
+                    expressionTxt.text = calculator.getExpression()
+                    resultTxt.text = calculator.getResult()
+                    afterResult = true
+                }
             }
-            else->calculator.insertAny(buttonTxt.single())
+            else->{
+                if(afterResult)
+                    calculator.clear()
+                calculator.insertAny(buttonTxt.single())
+                afterResult=false
+            }
         }
-        expressionTxt.text=calculator.getExpression()
+        if(!afterResult)
+            expressionTxt.text=calculator.getExpression()
          //expressionTxt.text=calculator.numbers.toString()
         //expressionTxt.text=calculator.number
         //resultTxt.text=calculator.operators.toString()

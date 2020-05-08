@@ -25,6 +25,7 @@ class Calculator (){
         isOneDot=false
         lastAdded="none"
         validation()
+        getResult()
     }
 
     fun insertNumber(num:Double)=numbers.add(num)
@@ -91,7 +92,8 @@ class Calculator (){
     }
 
     fun isFirstSign():Boolean{
-        if(previousSign== ' ' && currentSign==' ')
+        val emptyCalc=(numbers.none()&&operators.none())
+        if(previousSign== ' ' && currentSign==' ' && emptyCalc)
             return true
         return false
     }
@@ -127,7 +129,11 @@ class Calculator (){
     fun delete() {
         if(!number.none()){
             number=number.dropLast(1)
-        }else {
+        }else if (currentSign!=' ' || previousSign!=' '){
+            currentSign=' '
+            previousSign=' '
+        }  else if (numbers.lastIndex!=-1) {
+            checkLastAdded()
             when (lastAdded) {
                 "number" -> numbers.removeAt(numbers.lastIndex)
                 "operator" -> operators.removeAt(numbers.lastIndex)
@@ -141,7 +147,7 @@ class Calculator (){
     fun checkLastAdded(){
         lastAdded = if(operators.lastIndex==numbers.lastIndex && operators.lastIndex!=-1){
             "operator"
-        }else if (operators.lastIndex!=numbers.lastIndex && operators.lastIndex!=-1){
+        }else if (operators.lastIndex!=numbers.lastIndex && numbers.lastIndex!=-1){
             "number"
         }else "none"
     }
@@ -163,12 +169,12 @@ class Calculator (){
 
     fun getResult():String{
         calculatedProperly=true
+        outcome=""
         insertSignsFromTmpVar()
         if(canCalculate())
             calculate()
-        if(!number.none())
+        if(!numbers.none())
             outcome=numbers[0].toString()
-        clear()
 
        return if(calculatedProperly) {
            "=$outcome"
