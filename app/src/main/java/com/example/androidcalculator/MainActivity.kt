@@ -19,16 +19,19 @@ class MainActivity : AppCompatActivity() {
         resultTxt=findViewById<TextView>(R.id.textViewResult)
     }
     fun buttonClicked(view: View){
-        var buttonId=findViewById<TextView>(view?.id)
+        var buttonId=findViewById<TextView>(view.id)
         var buttonTxt=buttonId?.text.toString()
 
 
         when(buttonTxt){
             "CLR"->{
-                calculator.clear()
-                expressionTxt.setText("")
+                clr()
             }
-            "Delete"->calculator.delete()
+            "Delete"->{
+                if(afterResult)
+                    clr()
+                calculator.delete()
+            }
             "="->{
                 if(!afterResult) {
                     expressionTxt.text = calculator.getExpression()
@@ -38,7 +41,7 @@ class MainActivity : AppCompatActivity() {
             }
             else->{
                 if(afterResult)
-                    calculator.clear()
+                    clr()
                 calculator.insertAny(buttonTxt.single())
                 afterResult=false
             }
@@ -48,5 +51,10 @@ class MainActivity : AppCompatActivity() {
          //expressionTxt.text=calculator.numbers.toString()
         //expressionTxt.text=calculator.number
         //resultTxt.text=calculator.operators.toString()
+    }
+    fun clr(){
+        calculator.clear()
+        expressionTxt.text=""
+        afterResult=false
     }
 }

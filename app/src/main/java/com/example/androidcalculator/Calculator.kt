@@ -1,7 +1,7 @@
 package com.example.androidcalculator
 
 class Calculator (){
-    val numbers= mutableListOf<Double>()
+    val numbers= mutableListOf<String>()
     val operators= mutableListOf<Char>()
     private val hierarchy= listOf('/','*','+','-')
     //private val operatorsTest= listOf('/','*','+','-','.')
@@ -28,9 +28,9 @@ class Calculator (){
         getResult()
     }
 
-    fun insertNumber(num:Double)=numbers.add(num)
+    fun insertNumber(num:String)=numbers.add(num)
     fun insertSign(sign:Char)=operators.add(sign)
-    fun insertNumberAndSetSign(num: Double,sign: Char){
+    fun insertNumberAndSetSign(num: String,sign: Char){
         insertNumber(num)
         isOneDot=false
         number=""
@@ -48,7 +48,7 @@ class Calculator (){
             when(previousSign){
                 '0'->{
                     if(checkSignWithLists(any,hierarchy)){
-                        insertNumberAndSetSign(number.toDouble(),any)
+                        insertNumberAndSetSign(number,any)
                     }else if(any=='.' && !isOneDot){
                         isOneDot=true
                         number+=any
@@ -67,7 +67,7 @@ class Calculator (){
                 }
                 '.'->{
                     if(checkSignWithLists(any,hierarchy)){
-                        insertNumberAndSetSign(number.toDouble(),any)
+                        insertNumberAndSetSign(number,any)
                     }else if (checkSignWithLists(any,numbersWithZeroTest)){
                         currentSign=any
                         number+=any
@@ -78,7 +78,7 @@ class Calculator (){
                         currentSign=any
                         number+=currentSign
                     }else if(checkSignWithLists(any, hierarchy)){
-                        insertNumberAndSetSign(number.toDouble(),any)
+                        insertNumberAndSetSign(number,any)
                     }else if (any=='.'){
                         if(!isOneDot){
                             currentSign=any
@@ -118,7 +118,7 @@ class Calculator (){
             for(operator in hierarchy){
                 while(operator in operators && numbers.lastIndex!=0){
                     var tmpIndex=operators.indexOf(operator)
-                    numbers[tmpIndex]=simpleOperation(operator,numbers[tmpIndex],numbers[tmpIndex+1])
+                    numbers[tmpIndex]=simpleOperation(operator,numbers[tmpIndex].toDouble(),numbers[tmpIndex+1].toDouble()).toString()
                     operators.removeAt(tmpIndex)
                     numbers.removeAt(tmpIndex+1)
                 }
@@ -155,7 +155,7 @@ class Calculator (){
     fun insertSignsFromTmpVar(){
         if(!isFirstSign()){
             if(currentSign in numbersWithZeroTest && !number.none()){
-                insertNumber(number.toDouble())
+                insertNumber(number)
             }
         }
     }
@@ -201,7 +201,7 @@ class Calculator (){
     //test
     fun testCalculateFuncWithOnlyPlus(){
         clear()
-        for ( i in 0..10 )insertNumber(i.toDouble())
+        for ( i in 0..10 )insertNumber(i.toString())
         for (i in 0..9)insertSign('+')
         calculate()
     }
