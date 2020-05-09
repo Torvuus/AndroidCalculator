@@ -1,8 +1,8 @@
 package com.example.androidcalculator
 
 class Calculator (){
-    val numbers= mutableListOf<String>()
-    val operators= mutableListOf<Char>()
+    var numbers= mutableListOf<String>()
+    var operators= mutableListOf<Char>()
     private val hierarchy= listOf('/','*','+','-')
     //private val operatorsTest= listOf('/','*','+','-','.')
     private val numbersWithZeroTest= listOf('1','2','3','4','5','6','7','8','9','0')
@@ -91,6 +91,33 @@ class Calculator (){
         }
     }
 
+    fun fixedInsertAny(sign: Char){
+        checkLastAdded()
+        when(lastAdded){
+            "none" -> if(sign in numbersWithZeroTest)insertNumber(sign.toString())
+            "operator"->{
+                if(sign in hierarchy){
+                    operators[operators.lastIndex]=sign
+                }else if(sign in numbersWithZeroTest){
+                    insertNumber(sign.toString())
+                }
+            }
+            "number"->{
+                if(sign in numbersWithZeroTest){
+                    checkNumber(numbers[numbers.lastIndex],sign)
+//                    var numberAssist=numbers[numbers.lastIndex]+sign
+//                    numbers[numbers.lastIndex]+=numberAssist
+                }else if(sign in hierarchy){
+                    insertSign(sign)
+                }
+            }
+        }
+    }
+
+    fun checkNumber(number:String,sign:Char){
+
+    }
+
     fun isFirstSign():Boolean{
         val emptyCalc=(numbers.none()&&operators.none())
         if(previousSign== ' ' && currentSign==' ' && emptyCalc)
@@ -128,7 +155,8 @@ class Calculator (){
 
     fun delete() {
         if(!number.none()){
-            number=number.dropLast(1)
+            //number=number.dropLast(1)
+            number=""
         }else if (currentSign!=' ' || previousSign!=' '){
             currentSign=' '
             previousSign=' '
