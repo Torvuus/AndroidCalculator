@@ -1,17 +1,18 @@
 package com.example.androidcalculator
 
 class Calculator (){
+    //Lists that keeps numbers and operators that will be calculated
     var numbers= mutableListOf<String>()
     var operators= mutableListOf<Char>()
+
+    //Lists that keeps appropiate signs that helps us
+    // find out what type of sign has been inserted by user
     private val hierarchy= listOf('/','*','+','-')
-    //private val operatorsTest= listOf('/','*','+','-','.')
     private val numbersWithZeroTest= listOf('1','2','3','4','5','6','7','8','9','0')
     private val numbersTest= listOf('1','2','3','4','5','6','7','8','9')
-    var previousSign = ' '
-    var currentSign = ' '
+
+    //Variables used with adding, to display expression, to receive result
     var expressionTxt=""
-    var number=""
-    var isOneDot=false
     var lastAdded="none"
     var outcome=""
     var calculatedProperly=true
@@ -19,10 +20,6 @@ class Calculator (){
     fun clear(){
         numbers.clear()
         operators.clear()
-        previousSign=' '
-        currentSign=' '
-        number=""
-        isOneDot=false
         lastAdded="none"
         validation()
         getResult()
@@ -30,81 +27,24 @@ class Calculator (){
 
     fun insertNumber(num:String)=numbers.add(num)
     fun insertSign(sign:Char)=operators.add(sign)
-    fun insertNumberAndSetSign(num: String,sign: Char){
-        insertNumber(num)
-        isOneDot=false
-        number=""
-        currentSign=sign
-    }
 
-    fun insertAny(any:Char){
-        previousSign=currentSign
-        if (isFirstSign()){
-            if(checkSignWithLists(any,numbersWithZeroTest)){
-                number+=any
-                currentSign=any
-            }
-        }else{
-            when(previousSign){
-                '0'->{
-                    if(checkSignWithLists(any,hierarchy)){
-                        insertNumberAndSetSign(number,any)
-                    }else if(any=='.' && !isOneDot){
-                        isOneDot=true
-                        number+=any
-                        currentSign=any
-                    }else if(number.length>1 && number!="0" && checkSignWithLists(any,numbersWithZeroTest)){
-                        currentSign=any
-                        number+=any
-                    }
-                }
-                in hierarchy->{
-                    if(checkSignWithLists(any, numbersWithZeroTest)){
-                        currentSign=any
-                        number+=currentSign
-                        insertSign(previousSign)
-                    }
-                }
-                '.'->{
-                    if(checkSignWithLists(any,hierarchy)){
-                        insertNumberAndSetSign(number,any)
-                    }else if (checkSignWithLists(any,numbersWithZeroTest)){
-                        currentSign=any
-                        number+=any
-                    }
-                }
-                in numbersTest->{
-                    if(checkSignWithLists(any, numbersWithZeroTest)){
-                        currentSign=any
-                        number+=currentSign
-                    }else if(checkSignWithLists(any, hierarchy)){
-                        insertNumberAndSetSign(number,any)
-                    }else if (any=='.'){
-                        if(!isOneDot){
-                            currentSign=any
-                            number+=any
-                            isOneDot=true
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun fixedInsertAny(sign: Char){
+    fun insertAny(sign: Char){
         checkLastAdded()
         when(lastAdded){
-            "none" -> if(sign in numbersWithZeroTest)insertNumber(sign.toString())
+            "none" -> {
+                if(sign=='.')insertNumber("0.")
+                if(sign in numbersWithZeroTest)insertNumber(sign.toString())
+            }
             "operator"->{
                 if(sign in hierarchy){
                     operators[operators.lastIndex]=sign
                 }else if(sign in numbersWithZeroTest){
                     insertNumber(sign.toString())
-                }
+                }else if(sign=='.')insertNumber("0.")
             }
             "number"->{
-                if(sign in numbersWithZeroTest){
-                    checkNumber(numbers[numbers.lastIndex],sign)
+                if(sign in numbersWithZeroTest || sign=='.'){
+                    numbers[numbers.lastIndex]=checkNumber(numbers[numbers.lastIndex],sign)
 //                    var numberAssist=numbers[numbers.lastIndex]+sign
 //                    numbers[numbers.lastIndex]+=numberAssist
                 }else if(sign in hierarchy){
@@ -114,18 +54,19 @@ class Calculator (){
         }
     }
 
-    fun checkNumber(number:String,sign:Char){
-
+    fun checkNumber(number:String,sign:Char):String{
+        if(sign=='.'){
+            if(!number.contains(sign,true) && number.length>=1)
+                return number+sign
+        }else{
+            return if(number.length==1 && number[0]=='0'){
+                number+'.'+sign
+            }else{
+                number+sign
+            }
+        }
+        return number
     }
-
-    fun isFirstSign():Boolean{
-        val emptyCalc=(numbers.none()&&operators.none())
-        if(previousSign== ' ' && currentSign==' ' && emptyCalc)
-            return true
-        return false
-    }
-
-    fun checkSignWithLists(sign: Char,list: List<Char>):Boolean= sign in list
 
     fun simpleOperation(sign:Char,a:Double,b:Double):Double{
         return when (sign) {
@@ -139,6 +80,7 @@ class Calculator (){
             else -> 0.0
         }
     }
+
     fun calculate(){
         if(numbers.lastIndex!=-1 && operators.lastIndex!=-1){
 
@@ -154,13 +96,7 @@ class Calculator (){
     }
 
     fun delete() {
-        if(!number.none()){
-            //number=number.dropLast(1)
-            number=""
-        }else if (currentSign!=' ' || previousSign!=' '){
-            currentSign=' '
-            previousSign=' '
-        }  else if (numbers.lastIndex!=-1) {
+        if (numbers.lastIndex!=-1) {
             checkLastAdded()
             when (lastAdded) {
                 "number" -> numbers.removeAt(numbers.lastIndex)
@@ -180,13 +116,6 @@ class Calculator (){
         }else "none"
     }
 
-    fun insertSignsFromTmpVar(){
-        if(!isFirstSign()){
-            if(currentSign in numbersWithZeroTest && !number.none()){
-                insertNumber(number)
-            }
-        }
-    }
     fun validation(){
         if(calculatedProperly)
             calculatedProperly = numbers.size>-1
@@ -198,9 +127,10 @@ class Calculator (){
     fun getResult():String{
         calculatedProperly=true
         outcome=""
-        insertSignsFromTmpVar()
-        if(canCalculate())
+        if(!canCalculate())
+            if(numbers.size>0)operators.removeAt(operators.lastIndex)
             calculate()
+
         if(!numbers.none())
             outcome=numbers[0].toString()
 
@@ -221,8 +151,6 @@ class Calculator (){
                 increasingIndex++
         }
         }
-        if(currentSign!=' ' && currentSign in hierarchy)expressionTxt+=currentSign
-        else if (!number.none()) expressionTxt+=number
         return expressionTxt
     }
 

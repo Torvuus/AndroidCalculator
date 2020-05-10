@@ -48,12 +48,15 @@ class MainActivity : AppCompatActivity() {
         }
         if(!afterResult)
             expressionTxt.text=calculator.getExpression()
+
+
          //expressionTxt.text=calculator.numbers.toString()
         //expressionTxt.text=calculator.number
         //resultTxt.text=calculator.operators.toString()
     }
     fun clr(){
         calculator.clear()
+        resultTxt.text="="
         expressionTxt.text=""
         afterResult=false
     }
