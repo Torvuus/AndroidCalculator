@@ -1,5 +1,7 @@
 package com.example.androidcalculator
 
+import android.widget.Toast
+
 class Calculator (){
     //Lists that keeps numbers and operators that will be calculated
     var numbers= mutableListOf<String>()
@@ -99,7 +101,14 @@ class Calculator (){
         if (numbers.lastIndex!=-1) {
             checkLastAdded()
             when (lastAdded) {
-                "number" -> numbers.removeAt(numbers.lastIndex)
+                "number" ->{
+                    if(numbers[numbers.lastIndex].isNotEmpty()){
+                        var number=numbers[numbers.lastIndex]
+                        number=number.dropLast(1)
+                        numbers[numbers.lastIndex]=number
+                        if(numbers[numbers.lastIndex].isEmpty())numbers.removeAt(numbers.lastIndex)
+                    }
+                } //numbers.removeAt(numbers.lastIndex)
                 "operator" -> operators.removeAt(numbers.lastIndex)
             }
             checkLastAdded()
